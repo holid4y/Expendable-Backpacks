@@ -58,7 +58,7 @@ public record MochilaConfig(
             capacidade,
             requisitos,
             Math.clamp(c.getDouble("mochila.upgrades.adega.speed", 0.5), 0.0, 2.0),
-            c.getBoolean("mochila.visual.enabled", true),
+            c.getBoolean("mochila.visual.enabled", false),
             c.getBoolean("mochila.visual.show-to-owner", true),
             vetor(c, "mochila.visual.scale", new Vector3f(0.9f, 1.0f, 0.55f)),
             vetor(c, "mochila.visual.offset", new Vector3f(0.0f, -0.4f, -0.27f)),

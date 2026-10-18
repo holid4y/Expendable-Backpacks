@@ -74,9 +74,9 @@ mochila:
     toca-discos:
       level: 2
       discs: 1
-  # A mochila aparece nas costas para quem joga no Java.
+  # Mochila nas costas (Java). Desligada: atravessa capas e aparece em primeira pessoa.
   visual:
-    enabled: true
+    enabled: false
     show-to-owner: true
     # Tamanho da cabeça (um cubo de 0,5 bloco) em largura, altura e profundidade.
     scale: [0.9, 1.0, 0.55]
