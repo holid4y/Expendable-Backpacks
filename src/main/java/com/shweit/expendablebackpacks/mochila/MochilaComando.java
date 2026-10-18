@@ -21,9 +21,12 @@ import org.bukkit.persistence.PersistentDataType;
 /** /mochila [arvore | tocar | parar | ver | info | recarregar]. */
 final class MochilaComando implements TabExecutor {
 
-    /** Sound playing for each player and the world it plays in, to stop it later. */
-    private record Tocando(String som, UUID mundo) {
+    /** Sound playing for each player, its world (to stop it) and when the disc ends. */
+    private record Tocando(String som, UUID mundo, long fim) {
     }
+
+    /** Disc length in seconds when JEXT can't tell; the trail stops at the latest after this. */
+    private static final int DURACAO_PADRAO = 300;
 
     private final MochilaServico servico;
     private final Runnable aoRecarregar;
@@ -34,6 +37,47 @@ final class MochilaComando implements TabExecutor {
     MochilaComando(MochilaServico servico, Runnable aoRecarregar) {
         this.servico = servico;
         this.aoRecarregar = aoRecarregar;
+        Bukkit.getScheduler().runTaskTimer(servico.plugin(), this::trilha, 4L, 4L);
+    }
+
+    /** Music notes around the head of everyone playing a disc, until the disc ends. */
+    private void trilha() {
+        long agora = System.currentTimeMillis();
+        var it = tocando.entrySet().iterator();
+        while (it.hasNext()) {
+            var e = it.next();
+            Player p = Bukkit.getPlayer(e.getKey());
+            if (p == null || agora > e.getValue().fim() || !p.getWorld().getUID().equals(e.getValue().mundo())) {
+                it.remove();
+                continue;
+            }
+            if (p.isDead() || p.isInvisible() || p.getGameMode() == org.bukkit.GameMode.SPECTATOR) {
+                continue;
+            }
+            var r = java.util.concurrent.ThreadLocalRandom.current();
+            var loc = p.getLocation().add(r.nextDouble(-0.5, 0.5), p.getHeight() + r.nextDouble(0.1, 0.5),
+                r.nextDouble(-0.5, 0.5));
+            // With count 0, the first offset of a note particle is its colour (0..1 across the palette).
+            p.getWorld().spawnParticle(org.bukkit.Particle.NOTE, loc, 0, r.nextDouble(), 0, 0, 1);
+        }
+    }
+
+    /** Length of a JEXT disc in seconds, read through JEXT's own API; a default if that fails. */
+    private static int duracao(String disco) {
+        var jext = Bukkit.getPluginManager().getPlugin("JukeboxExtendedReborn");
+        if (jext == null) {
+            return DURACAO_PADRAO;
+        }
+        try {
+            Object discos = jext.getClass().getMethod("getDiscs").invoke(jext);
+            Object d = discos.getClass().getMethod("get", String.class).invoke(discos, disco);
+            if (d != null && d.getClass().getMethod("getDuration").invoke(d) instanceof Integer s && s > 0) {
+                return Math.min(s, 3600);
+            }
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return DURACAO_PADRAO;
+        }
+        return DURACAO_PADRAO;
     }
 
     @Override
@@ -158,7 +202,8 @@ final class MochilaComando implements TabExecutor {
         parar(p);
         String som = "minecraft:" + discos.get(i);
         p.getWorld().playSound(p, som, SoundCategory.RECORDS, 4f, 1f);
-        tocando.put(p.getUniqueId(), new Tocando(som, p.getWorld().getUID()));
+        tocando.put(p.getUniqueId(), new Tocando(som, p.getWorld().getUID(),
+            System.currentTimeMillis() + duracao(discos.get(i)) * 1000L));
         p.sendMessage(MochilaServico.PREFIXO + "Tocando o disco " + (i + 1) + " de " + discos.size()
             + ". /mochila tocar passa para o próximo, /mochila parar para.");
     }
