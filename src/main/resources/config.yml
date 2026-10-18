@@ -29,3 +29,59 @@ give-backpack-on-first-join: false
 # Use & for color codes (e.g., &a for green, &6 for gold)
 # Set to empty string ("") to disable the message
 starter-backpack-message: "&7Welcome! You've been given a &7Leather Backpack &7to get started. Right-click to open!"
+
+# ================================================================
+# FeatherFlux: mochila pessoal e árvore de melhorias
+# ================================================================
+
+# Recursos originais do Expendable Backpacks. No FeatherFlux cada jogador tem uma
+# única mochila presa na hotbar, então as receitas e a mochila como bloco ficam
+# desligadas.
+recipes-enabled: false
+placement-enabled: false
+
+mochila:
+  enabled: true
+  # Slot da hotbar onde a mochila fica presa (0 = primeiro, 8 = último).
+  slot: 8
+  # Caixas de shulker não entram em nenhuma mochila.
+  block-shulker-boxes: true
+  # Tamanho por nível de origem. Vale o maior nível que o jogador já teve em
+  # qualquer origem (lido de originspaper:max_level) e a mochila nunca diminui.
+  capacity:
+    LEATHER: 1
+    COPPER: 3
+    IRON: 5
+    GOLD: 7
+    DIAMOND: 9
+    NETHERITE: 10
+  upgrades:
+    coletor:
+      level: 2
+    reabastecer:
+      level: 4
+    bolso-de-pesca:
+      level: 3
+      fish: 15
+    saqueador:
+      level: 3
+      chests: 10
+    adega:
+      level: 5
+      drinks: 5
+      # 0.5 = metade da velocidade de um barril. Só envelhece com o dono online.
+      speed: 0.5
+    toca-discos:
+      level: 2
+      discs: 1
+  # A mochila aparece nas costas para quem joga no Java.
+  visual:
+    enabled: true
+    show-to-owner: true
+    # Tamanho da cabeça (um cubo de 0,5 bloco) em largura, altura e profundidade.
+    scale: [0.9, 1.0, 0.55]
+    # Posição do topo da mochila a partir do topo do jogador: lado, altura, frente
+    # (negativo = costas). -0.4 deixa a mochila entre os ombros e a cintura.
+    offset: [0.0, -0.4, -0.27]
+    # Graus somados à direção do corpo. Com 0 a frente da textura olha para trás.
+    yaw: 0.0

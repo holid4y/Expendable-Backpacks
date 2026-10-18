@@ -3,8 +3,9 @@ version: '${VERSION}'
 main: '${PACKAGE}.ExpendableBackpacks'
 api-version: '26.2'
 author: Shweit
-description: Expendable Backpacks - Expandable Storage for Minecraft!
-folia-supported: true
+description: Expendable Backpacks - Expandable Storage for Minecraft! (FeatherFlux fork with personal backpacks and an upgrade tree)
+folia-supported: false
+softdepend: [packetevents, OriginsPaper, EvenMoreFish, Lootin, BreweryX, FeatherDiscos, JukeboxExtendedReborn]
 
 commands:
   backpack:
@@ -17,11 +18,21 @@ commands:
       /backpack clone <uuid> - Clone an Enderpack
     permission: backpack.use
     aliases: [bp]
+  mochila:
+    description: Abre a sua mochila e a árvore de melhorias.
+    usage: /mochila [arvore | tocar | parar]
+    permission: mochila.usar
 
 permissions:
+  mochila.usar:
+    description: Ter a mochila pessoal no slot da hotbar e usar /mochila.
+    default: true
+  mochila.admin:
+    description: /mochila ver, info e recarregar.
+    default: op
   backpack.use:
     description: Use backpack command and open own backpacks
-    default: true
+    default: op
   backpack.give:
     description: Give backpacks to players
     default: op

@@ -65,15 +65,15 @@ public class BackpackItem {
 
         // Set lore
         List<String> lore = new ArrayList<>();
-        lore.add("§8" + tier.getRows() + " rows • " + tier.getSlots()
+        lore.add("§8" + tier.getRows() + " linhas • " + tier.getSlots()
             + " slots");
         if (tier.isEnderpack()) {
-            lore.add("§5§oShared Storage");
-            lore.add("§7All Enderpacks with the same ID");
-            lore.add("§7share the same inventory");
+            lore.add("§5§oArmazenamento compartilhado");
+            lore.add("§7Toda Mochila do Fim com o mesmo ID");
+            lore.add("§7divide o mesmo inventário");
         }
         lore.add("");
-        lore.add("§7Right-click to open");
+        lore.add("§7Clique direito para abrir");
         lore.add("§8ID: " + uuid.toString().substring(0, 8) + "...");
         meta.lore(TextUtil.fromLegacy(lore));
 
@@ -125,6 +125,21 @@ public class BackpackItem {
         }
         return meta.getPersistentDataContainer().has(BACKPACK_UUID_KEY,
             PersistentDataType.STRING);
+    }
+
+    /**
+     * Check if an item is a player's personal backpack (FeatherFlux), which other code must not
+     * open, place or move.
+     *
+     * @param item the item to check
+     * @return true if it carries an owner
+     */
+    public static boolean isPersonal(ItemStack item) {
+        if (!isBackpack(item)) {
+            return false;
+        }
+        return item.getItemMeta().getPersistentDataContainer()
+            .has(new NamespacedKey(plugin, "mochila_dono"), PersistentDataType.STRING);
     }
 
     /**

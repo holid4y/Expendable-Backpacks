@@ -7,42 +7,42 @@ import org.bukkit.Material;
  * NOTE: Replace PLACEHOLDER texture values with actual Base64 encoded textures.
  */
 public enum BackpackTier {
-    DIRT(0, "Dirt Backpack", 9,
+    DIRT(0, "Mochila de Terra", 9,
         "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQ"
         + "ubmV0L3RleHR1cmUvNWFlNmE5MTFmYTJiOWY0Y2IyYTM2NWVjYThkMGI2MGNjZDFiMGUzYmE"
         + "0ODA5ZDkzNDUzNzUxODMwOWMxYjRmYyJ9fX0=",
         Material.DIRT, "§7"),
-    LEATHER(1, "Leather Backpack", 9,
+    LEATHER(1, "Mochila de Couro", 9,
         "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQ"
         + "ubmV0L3RleHR1cmUvNDBiMWI1MzY3NDkxODM5MWEwN2E5ZDAwNTgyYzA1OGY5MjgwYmM1Mj"
         + "ZhNzE2Yzc5NmVlNWVhYjRiZTEwYTc2MCJ9fX0=",
         Material.LEATHER, "§7"),
-    COPPER(2, "Copper Backpack", 18,
+    COPPER(2, "Mochila de Cobre", 18,
         "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQ"
         + "ubmV0L3RleHR1cmUvMWU1ODNjYjc3MTU4MWQzYjI3YjIzZjYxN2M3YjhhNDNkY2Q3MjIwND"
         + "Q3ZmY5NWZmMTk2MDQxNGQyMzUwYmRiOSJ9fX0=",
         Material.COPPER_INGOT, "§6"),
-    IRON(3, "Iron Backpack", 27,
+    IRON(3, "Mochila de Ferro", 27,
         "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQ"
         + "ubmV0L3RleHR1cmUvZGRhZjhlZGMzMmFmYjQ2MWFlZTA3MTMwNTgwMjMxMDFmOTI0ZTJhN2"
         + "VmYTg4M2RhZTcyZDVkNTdkNGMwNTNkNyJ9fX0=",
         Material.IRON_INGOT, "§f"),
-    GOLD(4, "Gold Backpack", 36,
+    GOLD(4, "Mochila de Ouro", 36,
         "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQ"
         + "ubmV0L3RleHR1cmUvY2Y4NzUyNWFkODRlZmQxNjgwNmEyNmNhMDE5ODRiMjgwZTViYTY0MD"
         + "M1MDViNmY2Yzk4MDNjMjQ2NDJhYmZjNyJ9fX0=",
         Material.GOLD_INGOT, "§e"),
-    DIAMOND(5, "Diamond Backpack", 45,
+    DIAMOND(5, "Mochila de Diamante", 45,
         "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQ"
         + "ubmV0L3RleHR1cmUvMTBkMWIwNzMyYmY3YTcwZGU0ZGMwMTU1OWNjNWM5ODExMDY4ZWY3Yj"
         + "YwOTUwMTAzODI3MDlmOTQwOTM5MjdmNiJ9fX0=",
         Material.DIAMOND, "§b"),
-    NETHERITE(6, "Netherite Backpack", 54,
+    NETHERITE(6, "Mochila de Netherite", 54,
         "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQ"
         + "ubmV0L3RleHR1cmUvODM1ZDdjYzA5ZmZmYmNhM2UxYzAwZDQyMWFmYWE0MzJjZjcxZmNiMD"
         + "k1NTVmNTQ1MjNlNTIyMGQxYWYwZjk3ZCJ9fX0=",
         Material.NETHERITE_INGOT, "§8"),
-    ENDERPACK(7, "Enderpack", 27,
+    ENDERPACK(7, "Mochila do Fim", 27,
         "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQ"
         + "ubmV0L3RleHR1cmUvOGQ1OWY0ZGRiYjJhMDk0YzFkYTc2NTRjMWViZjlkODUxNWEyYjc1YT"
         + "IyMGZkNzNhNjUxMzUwNzJlMzhkNGY2MCJ9fX0=",

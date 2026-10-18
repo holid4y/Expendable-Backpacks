@@ -61,9 +61,9 @@ public class BackpackInteractionListener implements Listener {
             }
         }
 
-        // Handle backpack items
+        // Handle backpack items; the personal backpack has its own listener (mochila package)
         ItemStack item = event.getItem();
-        if (!BackpackItem.isBackpack(item)) {
+        if (!BackpackItem.isBackpack(item) || BackpackItem.isPersonal(item)) {
             return;
         }
 
@@ -143,7 +143,7 @@ public class BackpackInteractionListener implements Listener {
         @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
         UUID backpackUUID = findBackpackUUID(inv);
         if (backpackUUID != null) {
-            backpackManager.saveInventory(backpackUUID, inv);
+            backpackManager.saveInventoryNow(backpackUUID, inv);
         }
     }
 

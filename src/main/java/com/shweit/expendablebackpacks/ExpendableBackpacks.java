@@ -8,10 +8,10 @@ import com.shweit.expendablebackpacks.listeners.BackpackInteractionListener;
 import com.shweit.expendablebackpacks.listeners.BackpackProtectionListener;
 import com.shweit.expendablebackpacks.listeners.BackpackSmithingListener;
 import com.shweit.expendablebackpacks.listeners.PlayerJoinListener;
+import com.shweit.expendablebackpacks.mochila.MochilaModulo;
 import com.shweit.expendablebackpacks.recipes.BackpackRecipes;
 import com.shweit.expendablebackpacks.storage.BackpackManager;
 import com.shweit.expendablebackpacks.util.BackpackBlockUtil;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -20,6 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class ExpendableBackpacks extends JavaPlugin {
 
     private BackpackManager backpackManager;
+    private MochilaModulo mochila;
 
     @Override
     public void onEnable() {
@@ -36,21 +37,26 @@ public class ExpendableBackpacks extends JavaPlugin {
         backpackManager = new BackpackManager(this);
         backpackManager.loadAllBackpacks();
 
-        // Register recipes
-        BackpackRecipes backpackRecipes = new BackpackRecipes(this);
-        backpackRecipes.registerAll();
+        // FeatherFlux runs one personal backpack per player: crafting is off unless re-enabled.
+        boolean recipes = getConfig().getBoolean("recipes-enabled", false);
+        if (recipes) {
+            BackpackRecipes backpackRecipes = new BackpackRecipes(this);
+            backpackRecipes.registerAll();
+        }
 
         // Register listeners
-        getServer().getPluginManager().registerEvents(
-            new BackpackCraftingListener(backpackManager, this), this);
-        getServer().getPluginManager().registerEvents(
-            new BackpackSmithingListener(backpackManager), this);
+        if (recipes) {
+            getServer().getPluginManager().registerEvents(
+                new BackpackCraftingListener(backpackManager, this), this);
+            getServer().getPluginManager().registerEvents(
+                new BackpackSmithingListener(backpackManager), this);
+        }
         getServer().getPluginManager().registerEvents(
             new BackpackInteractionListener(backpackManager), this);
         getServer().getPluginManager().registerEvents(
             new BackpackProtectionListener(this, backpackManager), this);
         getServer().getPluginManager().registerEvents(
-            new BackpackBlockListener(), this);
+            new BackpackBlockListener(getConfig().getBoolean("placement-enabled", false)), this);
         getServer().getPluginManager().registerEvents(
             new PlayerJoinListener(this), this);
         getServer().getPluginManager().registerEvents(
@@ -61,17 +67,20 @@ public class ExpendableBackpacks extends JavaPlugin {
         getCommand("backpack").setExecutor(backpackCommand);
         getCommand("backpack").setTabCompleter(backpackCommand);
 
-        // Initialize bStats metrics
-        new Metrics(this, 28070);
+        // No bStats in this fork: it would report a modified build under the upstream author's id.
+        mochila = new MochilaModulo(this, backpackManager);
+        mochila.ligar();
 
-        getLogger().info("Expendable Backpacks has been enabled!");
-        getLogger().info("Features: 8 Tiers, Placeable Blocks, Enderpack Support");
+        getLogger().info("Expendable Backpacks (FeatherFlux) has been enabled!");
     }
 
     @Override
     public void onDisable() {
         getLogger().info("Saving all backpack inventories...");
 
+        if (mochila != null) {
+            mochila.desligar();
+        }
         // Save all inventories
         if (backpackManager != null) {
             backpackManager.saveAllInventories();

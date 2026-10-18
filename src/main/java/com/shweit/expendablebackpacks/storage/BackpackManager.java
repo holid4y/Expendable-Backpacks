@@ -2,6 +2,10 @@ package com.shweit.expendablebackpacks.storage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +14,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -24,6 +29,7 @@ public class BackpackManager {
     private final File backpacksFile;
     private YamlConfiguration backpacksConfig;
     private final Map<UUID, Inventory> loadedInventories;
+    private boolean dirty;
 
     /**
      * Create a new BackpackManager.
@@ -58,17 +64,51 @@ public class BackpackManager {
                 plugin.getLogger().log(Level.SEVERE, "Could not create backpacks.yml!", e);
             }
         }
-        backpacksConfig = YamlConfiguration.loadConfiguration(backpacksFile);
+        YamlConfiguration loaded = new YamlConfiguration();
+        try {
+            loaded.load(backpacksFile);
+        } catch (IOException | InvalidConfigurationException e) {
+            // Never overwrite an unreadable file with an empty one: set it aside for recovery.
+            File broken = new File(backpacksFile.getParentFile(),
+                backpacksFile.getName() + ".corrupt-" + System.currentTimeMillis());
+            boolean moved = backpacksFile.renameTo(broken);
+            plugin.getLogger().log(Level.SEVERE, "backpacks.yml could not be read; "
+                + (moved ? "kept as " + broken.getName() : "left in place") + ".", e);
+            loaded = new YamlConfiguration();
+        }
+        backpacksConfig = loaded;
     }
 
     /**
-     * Save the backpacks.yml file.
+     * Save the backpacks.yml file atomically: written to a temporary file and moved over the old
+     * one, so a power cut mid-write can never leave every backpack truncated.
      */
     private void saveBackpacksFile() {
+        Path target = backpacksFile.toPath();
+        Path tmp = target.resolveSibling(backpacksFile.getName() + ".tmp");
         try {
-            backpacksConfig.save(backpacksFile);
+            Files.writeString(tmp, backpacksConfig.saveToString(), StandardCharsets.UTF_8);
+            Files.move(tmp, target, StandardCopyOption.REPLACE_EXISTING,
+                StandardCopyOption.ATOMIC_MOVE);
+            dirty = false;
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Could not save backpacks.yml!", e);
+        }
+    }
+
+    /** Copies the contents of every backpack someone has open, for the periodic autosave. */
+    public void snapshotOpen() {
+        for (Map.Entry<UUID, Inventory> entry : loadedInventories.entrySet()) {
+            if (!entry.getValue().getViewers().isEmpty()) {
+                saveInventory(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+    /** Writes backpacks.yml if anything changed since the last write. */
+    public void flush() {
+        if (dirty) {
+            saveBackpacksFile();
         }
     }
 
@@ -159,10 +199,20 @@ public class BackpackManager {
         if (contents != null) {
             backpacksConfig.set(path, java.util.Arrays.asList(contents));
         }
-        saveBackpacksFile();
-
-        // Update cache
+        // Update cache; the file is written by flush() (autosave, close, quit, disable).
         loadedInventories.put(backpackUUID, inventory);
+        dirty = true;
+    }
+
+    /**
+     * Records the contents and writes the file right away (closing a backpack, quitting).
+     *
+     * @param backpackUuid the backpack UUID
+     * @param inventory the inventory to save
+     */
+    public void saveInventoryNow(UUID backpackUuid, Inventory inventory) {
+        saveInventory(backpackUuid, inventory);
+        flush();
     }
 
     /**
@@ -237,8 +287,6 @@ public class BackpackManager {
      */
     @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     public List<UUID> getAllBackpackUUIDs() {
-        // Reload config to get latest data
-        backpacksConfig = YamlConfiguration.loadConfiguration(backpacksFile);
 
         List<UUID> uuids = new ArrayList<>();
 

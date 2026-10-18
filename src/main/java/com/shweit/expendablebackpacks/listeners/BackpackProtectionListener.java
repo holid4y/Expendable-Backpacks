@@ -58,7 +58,7 @@ public class BackpackProtectionListener implements Listener {
             if (cursor != null && BackpackItem.isBackpack(cursor)) {
                 event.setCancelled(true);
                 event.getWhoClicked().sendMessage(
-                    "§cYou cannot put a backpack inside another backpack!");
+                    "§cNão dá para guardar uma mochila dentro de outra.");
                 return;
             }
         }
@@ -70,7 +70,7 @@ public class BackpackProtectionListener implements Listener {
             if (topIsBackpack && clickedInventory != topInventory) {
                 event.setCancelled(true);
                 event.getWhoClicked().sendMessage(
-                    "§cYou cannot put a backpack inside another backpack!");
+                    "§cNão dá para guardar uma mochila dentro de outra.");
                 return;
             }
         }
@@ -96,7 +96,7 @@ public class BackpackProtectionListener implements Listener {
         if (draggedItem != null && BackpackItem.isBackpack(draggedItem)) {
             event.setCancelled(true);
             event.getWhoClicked().sendMessage(
-                "§cYou cannot put a backpack inside another backpack!");
+                "§cNão dá para guardar uma mochila dentro de outra.");
         }
     }
 

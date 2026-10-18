@@ -29,6 +29,17 @@ import org.bukkit.inventory.ItemStack;
  */
 public class BackpackBlockListener implements Listener {
 
+    private final boolean placementEnabled;
+
+    /**
+     * Create the listener.
+     *
+     * @param placementEnabled whether backpacks may be placed as blocks
+     */
+    public BackpackBlockListener(boolean placementEnabled) {
+        this.placementEnabled = placementEnabled;
+    }
+
     /**
      * Handles placement of backpack items as blocks.
      *
@@ -40,6 +51,10 @@ public class BackpackBlockListener implements Listener {
 
         // Check if placing a backpack
         if (!BackpackItem.isBackpack(item)) {
+            return;
+        }
+        if (BackpackItem.isPersonal(item) || !placementEnabled) {
+            event.setCancelled(true);
             return;
         }
 
